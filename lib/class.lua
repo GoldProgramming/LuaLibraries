@@ -1,3 +1,4 @@
+require( "lib.stdlib" )
 class = {}
 local reg = {}
 local mt = {}

@@ -1,3 +1,4 @@
+require( "lib.stdlib" )
 local mt = getmetatable( "" )
 mt.__index = function( t, k )
 	check( t, 1, "string" )
@@ -36,4 +37,8 @@ mt.__mod = function( t, formats )
 			return error( err, 2 )
 		end
 	end
+end
+function string:escape()
+	check( self, 1, "string" )
+	return self:gsub( "[%^%$%(%)%%%.%[%]%*%+%-%?]", function( c ) return "%" .. c end )
 end
