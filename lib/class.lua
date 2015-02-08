@@ -1,18 +1,21 @@
 require( "lib.stdlib" )
 class = {}
-local reg = {}
 local mt = {}
 setmetatable( class, mt )
 function mt:__call( name, base )
-	check( name, 1, "string" )
+	check( name, 1, "string", "table" )
 	check( base, 2, "table", "nil" )
 	local __class = {}
 	local mt = {}
 	setmetatable( __class, setmetatable( mt, {__index = class} ) )
-	mt.__data = {
-		name = name,
-		type = "Class"
-	}
+	if type( name ) == "string" then
+		mt.__data = {
+			name = name,
+			type = "Class"
+		}
+	else
+		mt.__data = name
+	end
 	if base then
 		local __mt = getmetatable( base )
 		if __mt and __mt.__data and __mt.__data.name then
@@ -21,7 +24,7 @@ function mt:__call( name, base )
 		end
 	end
 	local x = tostring( __class )
-	mt.__tostring = function( t )
+	mt.__tostring = function()
 		if mt.__data and mt.__data.name and mt.__data.type then
 			return "<%s %s> %s" % { mt.__data.type, mt.__data.name, x }
 		elseif mt.__data and mt.__data.name then
@@ -32,8 +35,8 @@ function mt:__call( name, base )
 			return "<Object> %s" % x
 		end
 	end
-	mt.__call = function( ... )
-		local t = setmetatable( {}, {__index = self} )
+	mt.__call = function( self, ... )
+		local t = class( { name = getmetatable(self).__data.name, type = "Object" }, self )
 		if self.__call then
 			return self.__call( t, ... )
 		end
@@ -42,14 +45,6 @@ function mt:__call( name, base )
 	table.lock( mt.__data )
 	table.lock( mt, { __data = true } )
 	return __class
-end
-
-function class:isclass()
-	check( self, 1, "table" )
-	local mt = getmetatable( self )
-	if mt then
-		return reg[tostring(mt):match( "table: (.+)" )]
-	end
 end
 function class:isclassof( class_2 )
 	check( self, 1, "table" )
