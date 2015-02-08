@@ -20,15 +20,16 @@ function mt:__call( name, base )
 			table.lock( mt.__data.classof )
 		end
 	end
+	local x = tostring( t )
 	mt.__tostring = function( t )
 		if mt.__data and mt.__data.name and mt.__data.type then
-			return "<%s %s>" % { mt.__data.type, mt.__data.name }
+			return "<%s %s> %s" % { mt.__data.type, mt.__data.name, x }
 		elseif mt.__data and mt.__data.name then
-			return "<%s>" % mt.__data.name
+			return "<%s> %s" % { mt.__data.name, x }
 		elseif mt.__data and mt.__data.type then
-			return "<%s>" % mt.__data.type
+			return "<%s> %s" % { mt.__data.type, x }
 		else
-			return "<Object>"
+			return "<Object> %s" % x
 		end
 	end
 	table.lock( mt.__data )
