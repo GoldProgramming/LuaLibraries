@@ -20,7 +20,7 @@ function mt:__call( name, base )
 			table.lock( mt.__data.classof )
 		end
 	end
-	local x = tostring( t )
+	local x = tostring( __class )
 	mt.__tostring = function( t )
 		if mt.__data and mt.__data.name and mt.__data.type then
 			return "<%s %s> %s" % { mt.__data.type, mt.__data.name, x }
@@ -31,6 +31,13 @@ function mt:__call( name, base )
 		else
 			return "<Object> %s" % x
 		end
+	end
+	mt.__call = function( ... )
+		local t = setmetatable( {}, {__index = self} )
+		if self.__call then
+			return self.__call( t, ... )
+		end
+		return t
 	end
 	table.lock( mt.__data )
 	table.lock( mt, { __data = true } )
